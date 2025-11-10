@@ -10,7 +10,7 @@ import { WebsocketProvider } from "y-websocket";
 
 export default function EditorPage() {
     const doc = new Y.Doc();
-    new WebsocketProvider("ws://localhost:1234", "makr-room", doc);
+    new WebsocketProvider("ws://localhost:3001", "ws/webeditor", doc);
 
     return (
         <BuilderProvider doc={doc}>
