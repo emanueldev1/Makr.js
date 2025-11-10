@@ -22,10 +22,11 @@
         "yjs": "^13.6.0"
     },
     "devDependencies": {
+        "@types/react": "^19.2.2",
+        "@types/react-dom": "^19.2.2",
         "tsup": "^8.0.0",
         "typescript": "^5.0.0",
-        "vitest": "^4.0.8",
-        "@types/react": "^19.2.2"
+        "vitest": "^4.0.8"
     },
     "peerDependencies": {
         "react": ">=18"
