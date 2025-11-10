@@ -1,3 +1,4 @@
-export * from "./types";
 export * from "./builder";
-export * from "./components";
+export * from "./types";
+export { ButtonSettings } from "./components/Button";
+export { HeroSettings } from "./components/Hero";

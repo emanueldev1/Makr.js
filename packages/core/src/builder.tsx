@@ -1,49 +1,34 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import * as Y from "yjs";
-import { ComponentDefinition, ComponentId } from "./types";
-import { getAllComponents, getComponent, registerComponent } from "./components";
-
-interface TreeNode {
-    id: ComponentId;
-    component: string;
-    props: Record<string, any>;
-    children: TreeNode[];
-    slot?: string;
-}
+import { ComponentDefinition, ComponentId, ComponentSettings, TreeNode } from "./types";
 
 interface BuilderContextValue {
-    doc: Y.Doc;
-    tree: Y.Array<TreeNode>;
-    components: Y.Map<ComponentDefinition>;
-    registerComponent: (def: ComponentDefinition) => void;
+    tree: Y.Array<TreeNode> | TreeNode[];
+    components: Map<string, ComponentDefinition>;
     addNode: (parentId: ComponentId | null, componentName: string, slotName?: string) => void;
     updateNodeProps: (nodeId: ComponentId, props: Record<string, any>) => void;
+    isCollab: boolean;
 }
 
 const BuilderContext = createContext<BuilderContextValue | null>(null);
 
-export const BuilderProvider = ({ children, doc }: { children: React.ReactNode; doc: Y.Doc }) => {
-    const tree = doc.getArray<TreeNode>("tree");
-    const components = doc.getMap<ComponentDefinition>("components");
+export const BuilderProvider = ({ children, doc, components: componentSettings = [] }: { children: ReactNode; doc?: Y.Doc; components: (ComponentSettings & { render: (props: any, children?: React.ReactNode) => ReactNode })[] }) => {
+    const isCollab = !!doc;
+    const [localTree, setLocalTree] = useState<TreeNode[]>([]);
+    const tree = isCollab ? (doc?.getArray<TreeNode>("tree") ?? new Y.Array<TreeNode>()) : localTree;
+    const componentsMap = new Map<string, ComponentDefinition>();
 
     useEffect(() => {
-        const sync = () => {
-            const registered = getAllComponents();
-            components.clear();
-            registered.forEach((def) => components.set(def.name, def));
-        };
-
-        sync();
-        const observer = () => sync();
-        components.observeDeep(observer);
-        return () => components.unobserveDeep(observer);
-    }, [components]);
+        componentSettings.forEach((settings) => {
+            componentsMap.set(settings.name, { ...settings, render: settings.render });
+        });
+    }, [componentSettings]);
 
     const addNode = useCallback(
         (parentId: ComponentId | null, componentName: string, slotName?: string) => {
-            const def = getComponent(componentName);
+            const def = componentsMap.get(componentName);
             if (!def) return;
 
             const newNode: TreeNode = {
@@ -54,57 +39,95 @@ export const BuilderProvider = ({ children, doc }: { children: React.ReactNode; 
                 slot: slotName,
             };
 
-            if (!parentId) {
-                tree.push([newNode]);
-            } else {
-                const addToParent = (nodes: Y.Array<TreeNode>) => {
-                    for (let i = 0; i < nodes.length; i++) {
-                        const node = nodes.get(i);
-                        if (node.id === parentId) {
-                            if (slotName && def.slots?.some((s) => s.name === slotName)) {
-                                // Crear slot si no existe
-                                if (!node.children) node.children = [];
-                                node.children.push(newNode);
+            if (isCollab) {
+                const yTree = tree as Y.Array<TreeNode>;
+                if (!parentId) {
+                    yTree.push([newNode]);
+                } else {
+                    const addToParent = (nodes: Y.Array<TreeNode>): boolean => {
+                        for (let i = 0; i < nodes.length; i++) {
+                            const node = nodes.get(i);
+                            if (node.id === parentId && slotName && def.slots?.some((s) => s.name === slotName)) {
+                                const childrenArray = (node.children ?? []) as TreeNode[];
+                                childrenArray.push(newNode);
+                                node.children = childrenArray;
+                                return true;
                             }
+                            if (node.children && addToParent(node.children as unknown as Y.Array<TreeNode>)) return true;
+                        }
+                        return false;
+                    };
+                    addToParent(yTree);
+                }
+            } else {
+                const updateLocal = (nodes: TreeNode[]): boolean => {
+                    if (!parentId) {
+                        nodes.push(newNode);
+                        return true;
+                    }
+                    for (let i = 0; i < nodes.length; i++) {
+                        const node = nodes[i];
+                        if (node.id === parentId && slotName && def.slots?.some((s) => s.name === slotName)) {
+                            node.children.push(newNode);
                             return true;
                         }
-                        if (node.children && addToParent(node.children as any)) return true;
+                        if (node.children && updateLocal(node.children)) return true;
                     }
                     return false;
                 };
-
-                const rootArray = tree as any;
-                addToParent(rootArray);
+                setLocalTree((prev) => {
+                    const newTree = [...prev];
+                    updateLocal(newTree);
+                    return newTree;
+                });
             }
         },
-        [tree]
+        [tree, isCollab, componentsMap]
     );
 
     const updateNodeProps = useCallback(
         (nodeId: ComponentId, updatedProps: Record<string, any>) => {
-            const update = (nodes: Y.Array<TreeNode>) => {
-                for (let i = 0; i < nodes.length; i++) {
-                    const node = nodes.get(i);
-                    if (node.id === nodeId) {
-                        Object.assign(node.props, updatedProps);
-                        return true;
+            if (isCollab) {
+                const yTree = tree as Y.Array<TreeNode>;
+                const update = (nodes: Y.Array<TreeNode>): boolean => {
+                    for (let i = 0; i < nodes.length; i++) {
+                        const node = nodes.get(i);
+                        if (node.id === nodeId) {
+                            node.props = { ...node.props, ...updatedProps };
+                            return true;
+                        }
+                        if (node.children && update(node.children as unknown as Y.Array<TreeNode>)) return true;
                     }
-                    if (node.children && update(node.children as any)) return true;
-                }
-                return false;
-            };
-            update(tree as any);
+                    return false;
+                };
+                update(yTree);
+            } else {
+                const update = (nodes: TreeNode[]): boolean => {
+                    for (let i = 0; i < nodes.length; i++) {
+                        const node = nodes[i];
+                        if (node.id === nodeId) {
+                            node.props = { ...node.props, ...updatedProps };
+                            return true;
+                        }
+                        if (node.children && update(node.children)) return true;
+                    }
+                    return false;
+                };
+                setLocalTree((prev) => {
+                    const newTree = [...prev];
+                    update(newTree);
+                    return newTree;
+                });
+            }
         },
-        [tree]
+        [tree, isCollab]
     );
 
-    return <BuilderContext.Provider value={{ doc, tree, components, registerComponent, addNode, updateNodeProps }}>{children}</BuilderContext.Provider>;
+    return <BuilderContext.Provider value={{ tree, components: componentsMap, addNode, updateNodeProps, isCollab }}>{children}</BuilderContext.Provider>;
 };
 
 export const useBuilder = (): BuilderContextValue => {
     const context = useContext(BuilderContext);
-    if (!context) {
-        throw new Error("useBuilder must be used within BuilderProvider");
-    }
+    if (!context) throw new Error("useBuilder must be used within BuilderProvider");
     return context;
 };

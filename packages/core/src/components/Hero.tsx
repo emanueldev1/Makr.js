@@ -1,7 +1,6 @@
 import React from "react";
-import { registerComponent } from "../components";
 
-export const Hero = ({ title, children }: { title: string; children?: React.ReactNode }) => {
+export const HeroRender = ({ title, children }: { title: string; children?: React.ReactNode }) => {
     return (
         <section className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20">
             <div className="container mx-auto px-4 text-center">
@@ -12,16 +11,18 @@ export const Hero = ({ title, children }: { title: string; children?: React.Reac
     );
 };
 
-registerComponent({
+export const HeroSettings = {
     name: "Hero",
     displayName: "Hero Section",
     defaultProps: { title: "Título del Hero" },
     slots: [{ name: "actions", accept: ["Button"] }],
-    render: (props, children) => <Hero {...props}>{children}</Hero>,
-    configForm: (props, onChange) => (
-        <div>
-            <label className="block text-sm font-medium">Título</label>
-            <input className="mt-1 block w-full rounded border p-2 text-sm" defaultValue={props.title} onChange={(e) => onChange("title", e.target.value)} />
+    render: HeroRender,
+    configForm: (props: any, onChange: (key: string, value: any) => void) => (
+        <div className="space-y-3">
+            <div>
+                <label className="block text-sm font-medium">Título</label>
+                <input className="mt-1 block w-full rounded border p-2 text-sm" value={props.title} onChange={(e) => onChange("title", e.target.value)} />
+            </div>
         </div>
     ),
-});
+};

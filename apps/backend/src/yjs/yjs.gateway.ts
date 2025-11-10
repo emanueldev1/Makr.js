@@ -31,8 +31,12 @@ export class YjsGateway {
     //     setupWSConnection(connection, request, { ...(docName && { docName }) });
     //   }
     // }
-
     const docName = getCookie(request?.headers?.cookie || '', 'roomName');
+    console.log('New WebSocket connection established', {
+      ip: request.socket.remoteAddress,
+      userAgent: request.headers['user-agent'],
+      docName,
+    });
     setupWSConnection(connection, request, { ...(docName && { docName }) });
   }
 

@@ -1,0 +1,30 @@
+{
+    "name": "@makrjs/collab",
+    "version": "0.1.0",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch"
+    },
+    "dependencies": {
+        "@makrjs/core": "workspace:*",
+        "yjs": "^13.6.0",
+        "y-websocket": "^3.0.0"
+    },
+    "peerDependencies": {
+        "react": ">=18"
+    },
+    "devDependencies": {
+        "tsup": "^8.0.0",
+        "typescript": "^5.0.0",
+        "@types/react": "^19.2.2"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

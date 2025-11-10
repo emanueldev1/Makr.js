@@ -20,7 +20,9 @@ export const DroppableSlot = ({ slotName, parentId, currentChildren }: { slotNam
             ) : (
                 <div className="space-y-2">
                     {currentChildren.map((child) => (
-                        <div key={child.id}>→ {child.component}</div>
+                        <div key={child.id} className="text-xs text-gray-600">
+                            → {child.component}
+                        </div>
                     ))}
                 </div>
             )}
