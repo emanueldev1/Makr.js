@@ -3,6 +3,7 @@
 import { BuilderProvider } from "@makrjs/core";
 import { Canvas } from "@makrjs/ui/Canvas";
 import { Sidebar } from "@makrjs/ui/Sidebar";
+import { ConfigSidebar } from "@makrjs/ui/ConfigSidebar";
 import { DndProvider } from "@makrjs/ui/DndProvider";
 import { CollabProvider } from "@makrjs/collab";
 import { ButtonSettings, HeroSettings } from "@makrjs/core";
@@ -18,6 +19,7 @@ export default function EditorPage() {
                             <main className="flex-1 overflow-auto">
                                 <Canvas />
                             </main>
+                            <ConfigSidebar />
                         </div>
                     </DndProvider>
                 </BuilderProvider>

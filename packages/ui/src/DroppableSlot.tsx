@@ -12,8 +12,8 @@ export const DroppableSlot = ({ slotName, parentId, currentChildren }: { slotNam
     return (
         <div
             ref={setNodeRef}
-            className={`mt-4 p-4 border-2 border-dashed rounded-lg text-center text-sm transition
-        ${isOver ? "border-blue-500 bg-blue-50" : "border-gray-300"}`}
+            className={`mt-4 p-4 border-2 border-dashed rounded-lg text-center text-sm transition-all
+        ${isOver ? "border-blue-500 bg-blue-100 scale-105" : "border-gray-300"}`}
         >
             {currentChildren.length === 0 ? (
                 <span className="text-gray-500">Drop {slotName} here</span>

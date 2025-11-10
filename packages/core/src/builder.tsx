@@ -10,6 +10,8 @@ interface BuilderContextValue {
     addNode: (parentId: ComponentId | null, componentName: string, slotName?: string) => void;
     updateNodeProps: (nodeId: ComponentId, props: Record<string, any>) => void;
     isCollab: boolean;
+    selectedNodeId: ComponentId | null;
+    selectNode: (nodeId: ComponentId | null) => void;
 }
 
 const BuilderContext = createContext<BuilderContextValue | null>(null);
@@ -20,6 +22,7 @@ export const BuilderProvider = ({ children, doc, components: componentSettings =
     const tree = isCollab ? (doc?.getArray<TreeNode>("tree") ?? new Y.Array<TreeNode>()) : localTree;
     const [componentsMap, setComponentsMap] = useState<Map<string, ComponentDefinition>>(new Map());
     const [ready, setReady] = useState(false);
+    const [selectedNodeId, setSelectedNodeId] = useState<ComponentId | null>(null);
 
     useEffect(() => {
         const newMap = new Map<string, ComponentDefinition>();
@@ -27,7 +30,7 @@ export const BuilderProvider = ({ children, doc, components: componentSettings =
             newMap.set(settings.name, { ...settings, render: settings.render });
         });
         setComponentsMap(newMap);
-        setReady(true); // ← Activa el render final
+        setReady(true);
         console.log("Registered components:", newMap);
     }, [componentSettings]);
 
@@ -128,17 +131,11 @@ export const BuilderProvider = ({ children, doc, components: componentSettings =
         [tree, isCollab]
     );
 
-    return (
-        <BuilderContext.Provider value={{ tree, components: componentsMap, addNode, updateNodeProps, isCollab }}>
-            {ready ? (
-                children
-            ) : (
-                <div className="flex h-screen items-center justify-center">
-                    <div className="text-gray-500">Loading editor...</div>
-                </div>
-            )}
-        </BuilderContext.Provider>
-    );
+    const selectNode = useCallback((nodeId: ComponentId | null) => {
+        setSelectedNodeId(nodeId);
+    }, []);
+
+    return <BuilderContext.Provider value={{ tree, components: componentsMap, addNode, updateNodeProps, isCollab, selectedNodeId, selectNode }}>{ready ? children : null}</BuilderContext.Provider>;
 };
 
 export const useBuilder = (): BuilderContextValue => {

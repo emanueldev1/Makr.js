@@ -1,61 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useBuilder } from "@makrjs/core";
 import { TreeRenderer } from "./TreeRenderer";
+import { useDroppable } from "@dnd-kit/core";
 
 export const EditableNode = ({ node, slotChildren }: { node: any; slotChildren: Record<string, any[]> }) => {
-    const { updateNodeProps, components } = useBuilder();
+    const { selectNode, selectedNodeId, components } = useBuilder();
     const def = components.get(node.component);
-    const [isEditing, setIsEditing] = useState(false);
+
+    const isSelected = selectedNodeId === node.id;
 
     if (!def) return null;
 
-    const renderChildren = () => {
-        return Object.entries(slotChildren).map(([slotName, children]) => (
-            <React.Fragment key={slotName}>
-                <TreeRenderer nodes={children} parentId={node.id} />
-            </React.Fragment>
-        ));
-    };
-
     return (
         <div
-            className="group relative bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-blue-400 transition cursor-pointer"
-            onDoubleClick={(e) => {
+            className={`group relative bg-white rounded-lg shadow-sm border p-6 transition-all
+        ${isSelected ? "border-blue-500 shadow-md" : "border-gray-200 hover:border-blue-400"}`}
+            onClick={(e) => {
                 e.stopPropagation();
-                setIsEditing(true);
+                selectNode(node.id);
             }}
         >
-            {isEditing && def.configForm ? (
-                <div className="absolute inset-0 bg-white z-20 p-4 rounded-lg shadow-lg overflow-auto">
-                    <div className="text-sm font-medium mb-3">Editar {def.displayName || def.name}</div>
-                    {def.configForm(node.props, (key, value) => {
-                        updateNodeProps(node.id, { [key]: value });
-                    })}
-                    <div className="mt-4 flex justify-end gap-2">
-                        <button
-                            className="px-3 py-1 bg-gray-300 text-gray-700 text-sm rounded hover:bg-gray-400"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsEditing(false);
-                            }}
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsEditing(false);
-                            }}
-                        >
-                            Guardar
-                        </button>
+            {def.render(
+                node.props,
+                Object.keys(slotChildren).map((slot) => (
+                    <div key={slot} className="mt-4">
+                        <TreeRenderer nodes={slotChildren[slot]} parentId={node.id} />
                     </div>
-                </div>
-            ) : (
-                def.render(node.props, renderChildren())
+                ))
             )}
         </div>
     );

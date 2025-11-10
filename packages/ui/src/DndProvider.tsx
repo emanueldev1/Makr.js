@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay } from "@dnd-kit/core";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, rectIntersection } from "@dnd-kit/core";
 import { useBuilder } from "@makrjs/core";
 import { useState, useCallback } from "react";
 
 export const DndProvider = ({ children }: { children: React.ReactNode }) => {
     const { addNode } = useBuilder();
-    const [draggedItem, setDraggedItem] = useState<any>(null); // Para DragOverlay
+    const [draggedItem, setDraggedItem] = useState<any>(null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -29,7 +29,6 @@ export const DndProvider = ({ children }: { children: React.ReactNode }) => {
             const overId = over.id;
 
             if (overId === "canvas-root" || !over) {
-                // Drop en root o anywhere
                 addNode(null, componentName);
             } else if (over.data.current?.type === "slot") {
                 addNode(over.data.current.parentId, componentName, over.data.current.slotName);
@@ -39,9 +38,14 @@ export const DndProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     return (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext
+            sensors={sensors}
+            collisionDetection={rectIntersection} // ← Mejor para zones
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+        >
             {children}
-            <DragOverlay>{draggedItem ? <div className="p-3 bg-white rounded shadow-md opacity-80 cursor-grabbing">{draggedItem.displayName || draggedItem.name}</div> : null}</DragOverlay>
+            <DragOverlay dropAnimation={null}>{draggedItem ? <div className="p-3 bg-white rounded shadow-md opacity-80 cursor-grabbing transform rotate-3">{draggedItem.displayName || draggedItem.name}</div> : null}</DragOverlay>
         </DndContext>
     );
 };
