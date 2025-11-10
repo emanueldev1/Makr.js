@@ -18,12 +18,17 @@ export const BuilderProvider = ({ children, doc, components: componentSettings =
     const isCollab = !!doc;
     const [localTree, setLocalTree] = useState<TreeNode[]>([]);
     const tree = isCollab ? (doc?.getArray<TreeNode>("tree") ?? new Y.Array<TreeNode>()) : localTree;
-    const componentsMap = new Map<string, ComponentDefinition>();
+    const [componentsMap, setComponentsMap] = useState<Map<string, ComponentDefinition>>(new Map());
+    const [ready, setReady] = useState(false);
 
     useEffect(() => {
+        const newMap = new Map<string, ComponentDefinition>();
         componentSettings.forEach((settings) => {
-            componentsMap.set(settings.name, { ...settings, render: settings.render });
+            newMap.set(settings.name, { ...settings, render: settings.render });
         });
+        setComponentsMap(newMap);
+        setReady(true); // ← Activa el render final
+        console.log("Registered components:", newMap);
     }, [componentSettings]);
 
     const addNode = useCallback(
@@ -123,7 +128,17 @@ export const BuilderProvider = ({ children, doc, components: componentSettings =
         [tree, isCollab]
     );
 
-    return <BuilderContext.Provider value={{ tree, components: componentsMap, addNode, updateNodeProps, isCollab }}>{children}</BuilderContext.Provider>;
+    return (
+        <BuilderContext.Provider value={{ tree, components: componentsMap, addNode, updateNodeProps, isCollab }}>
+            {ready ? (
+                children
+            ) : (
+                <div className="flex h-screen items-center justify-center">
+                    <div className="text-gray-500">Loading editor...</div>
+                </div>
+            )}
+        </BuilderContext.Provider>
+    );
 };
 
 export const useBuilder = (): BuilderContextValue => {

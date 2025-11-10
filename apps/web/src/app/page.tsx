@@ -1,4 +1,3 @@
-// apps/web/src/app/editor/page.tsx
 "use client";
 
 import { BuilderProvider } from "@makrjs/core";
@@ -11,7 +10,7 @@ export default function EditorPage() {
     return (
         <CollabProvider roomName="ws/webeditor" serverUrl="ws://localhost:3001">
             {(doc) => (
-                <BuilderProvider components={[ButtonSettings, HeroSettings]}>
+                <BuilderProvider doc={doc} components={[ButtonSettings, HeroSettings]}>
                     <div className="flex h-screen bg-gray-100">
                         <Sidebar />
                         <main className="flex-1 overflow-auto">
