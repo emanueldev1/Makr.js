@@ -13,9 +13,9 @@ export const EditableNode = ({ node, slotChildren }: { node: any; slotChildren: 
 
     const renderChildren = () => {
         return Object.entries(slotChildren).map(([slotName, children]) => (
-            <div key={slotName}>
+            <React.Fragment key={slotName}>
                 <TreeRenderer nodes={children} parentId={node.id} />
-            </div>
+            </React.Fragment>
         ));
     };
 

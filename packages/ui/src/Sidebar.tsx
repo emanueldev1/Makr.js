@@ -6,7 +6,6 @@ import { useBuilder } from "@makrjs/core";
 
 export const Sidebar = () => {
     const { components } = useBuilder();
-
     const componentList = Array.from(components.values());
 
     if (componentList.length === 0) {
@@ -31,13 +30,19 @@ export const Sidebar = () => {
 };
 
 const DraggableComponent = ({ component }: { component: any }) => {
-    const { attributes, listeners, setNodeRef } = useDraggable({
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: `sidebar-${component.name}`,
         data: { component },
     });
 
     return (
-        <div ref={setNodeRef} {...attributes} {...listeners} className="p-3 bg-gray-50 rounded border border-gray-300 cursor-grab active:cursor-grabbing text-sm hover:bg-gray-100 transition select-none">
+        <div
+            ref={setNodeRef}
+            {...attributes}
+            {...listeners}
+            className={`p-3 bg-gray-50 rounded border border-gray-300 text-sm transition-all select-none
+        ${isDragging ? "opacity-50 scale-95 cursor-grabbing" : "cursor-grab hover:bg-gray-100"}`}
+        >
             {component.displayName || component.name}
         </div>
     );
