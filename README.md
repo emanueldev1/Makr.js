@@ -1,135 +1,98 @@
-# Turborepo starter
+<div align="center">
 
-This Turborepo starter is maintained by the Turborepo core team.
+# 🧱 Makr.js
 
-## Using this example
+[![status](https://img.shields.io/badge/status-in%20development-yellow.svg)](https://github.com/emanueldev1/Makr.js)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![issues](https://img.shields.io/github/issues/emanueldev1/Makr.js.svg)](https://github.com/emanueldev1/Makr.js/issues)
+[![stars](https://img.shields.io/github/stars/emanueldev1/Makr.js.svg)](https://github.com/emanueldev1/Makr.js/stargazers)
 
-Run the following command:
+**Makr.js** is an open-source project in active development, aiming to become a modular engine for building modern website builders using **React**, **Next.js**, **Yjs**, and **Tailwind CSS**.
 
-```sh
-npx create-turbo@latest
-```
+</div>
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+## 🚀 Vision
 
-### Apps and Packages
+Makr.js was created to provide a solid, flexible foundation for building visual editors on the web.  
+The goal is to let developers craft their own builder — from a simple block editor to a full collaborative design platform — without having to start from scratch.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@makrjs/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@makrjs/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@makrjs/typescript-config`: `tsconfig.json`s used throughout the monorepo
+---
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## ⚙️ What It Aims to Do
 
-### Utilities
+- **Full React & Next.js Compatibility**  
+  Support for both *Server-Side Rendering (SSR)* and *Client-Side Rendering (CSR)*.
 
-This Turborepo has some additional tools already setup for you:
+- **Real-Time Collaboration**  
+  Integration with **Yjs** for live editing and synchronization between multiple users, with backend-agnostic support.
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- **Modular Architecture**  
+  The project will be divided into packages — a `core`, a default `ui`, integration adapters, and optional collaboration modules.
 
-### Build
+- **Customizable Interface**  
+  The default interface will be built with **shadcn/ui** and **TailwindCSS**, but developers can easily replace or extend it.
 
-To build all apps and packages, run the following command:
+- **Smart Save System**  
+  Manual and automatic saving with change detection, *draft* and *published* modes, and support for custom backend integrations.
 
-```
-cd my-turborepo
+- **Advanced Drag & Drop + Nested Components**  
+  Components can contain other editable components, with configurable drop zones and nesting.
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+- **Simple & Extensible API**  
+  Designed so developers can register new components, define custom props, and extend functionality with minimal friction.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+---
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 🧠 Project Philosophy
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+Makr.js isn’t meant to be “just another page builder.”  
+It’s a **foundation** for developers who want to build their own.  
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+It provides the essentials — rendering, synchronization, editing, saving, and extensibility — while leaving full creative control to you.
 
-### Develop
+The project values:
+- **Framework agnosticism** – works with different backends and setups.  
+- **Modularity** – each piece can stand alone or be replaced.  
+- **Collaboration** – real-time teamwork built into the core.  
+- **Extensibility** – easy to customize, extend, and publish.
 
-To develop all apps and packages, run the following command:
+---
 
-```
-cd my-turborepo
+## 📅 Current Status
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+Makr.js is currently **in active development**.  
+The core architecture, adapters, and base UI are being designed and prototyped.  
+No npm packages have been released yet — the focus is on defining the foundation and long-term structure.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+If you’re interested in following the progress or contributing ideas, check the [issues page](https://github.com/emanueldev1/Makr.js/issues).
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+## 🤝 Contributing
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+Contributions and ideas are very welcome.  
+If you’d like to get involved:
 
-### Remote Caching
+1. Open an *issue* to share feedback or feature ideas.  
+2. Join the early discussions about the architecture and design.  
+3. Code contributions will be open once the core implementation starts taking shape.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+---
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## 📜 License
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+This project is licensed under the **MIT License**.  
+You’re free to use, modify, and contribute — just keep the license notice intact.
 
-```
-cd my-turborepo
+---
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+<div align="center">
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+🧩 **Makr.js**  
+Building the future of modular, collaborative, and open website builders.
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+[github.com/emanueldev1/Makr.js](https://github.com/emanueldev1/Makr.js)
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+</div>
